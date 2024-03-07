@@ -1,0 +1,11 @@
+.upload-container {
+  width: 50%;
+  border-style: dotted solid;
+  border-color: gray;
+}
+
+.uploaded-file {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
