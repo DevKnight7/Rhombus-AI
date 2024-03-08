@@ -1,11 +1,11 @@
 import './App.css';
 import UploadFile from './components/UploadFile';
-
+import DisplayData from './components/DisplayData';
 function App() {
   return (
-    <div className="App">
-      <h1>test</h1>
+    <div className="App mt-2">
       <UploadFile/>
+      <DisplayData />
     </div>
   );
 }

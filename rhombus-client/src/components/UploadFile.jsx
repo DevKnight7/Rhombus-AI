@@ -1,12 +1,31 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, CSSProperties } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDropzone } from "react-dropzone";
 import "./UploadFile.css";
+import { useDispatch } from "react-redux";
+import { setData } from "../state/index";
+import UploadFileImage from "../assets/upload.png";
+import "../Global.css";
+
+const override = {
+  position: "fixed",
+  display: "flex",
+  justifycontent: "center",
+  alignitems: "center",
+  borderColor: "#75b5ff",
+};
 
 export default function UploadFile() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const handleDataReceived = (data) => {
+    dispatch(setData(data));
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
     const validFileTypes = [
@@ -38,31 +57,26 @@ export default function UploadFile() {
       setSubmitting(true);
 
       try {
-        // Replace with your actual API endpoint
         const apiUrl = "http://127.0.0.1:8000/data/process/";
 
         const formData = new FormData();
-        formData.append('file', uploadedFile); // 'file' should match the name expected by your Django view
+        formData.append("file", uploadedFile);
 
         // Make API call to send the file
         const response = await fetch(apiUrl, {
-          method: "POST", // Adjust the method as needed (POST, GET, etc.)
-          body: formData, // Send FormData object
+          method: "POST",
+          body: formData,
         });
 
-        // Check if the response is successful (status code 2xx)
-        if (response.ok) {
+        if (response.status === 200) {
           var data = await response.json();
-          toast.success("File submitted successfully!");
-          console.log("response",data)
+          toast.success("File parsed successfully!");
+          handleDataReceived(data);
         } else {
-          // Handle API call error
           console.error("API call error:", response);
           toast.error("Error submitting the file. Please try again.");
         }
       } catch (error) {
-        // Handle other errors
-        console.error( error);
         toast.error("Error submitting the file. Please try again.");
       } finally {
         setSubmitting(false);
@@ -76,29 +90,48 @@ export default function UploadFile() {
   });
 
   return (
-    <div>
-      <div className="upload-container" {...getRootProps()}>
-        <ToastContainer />
-        <input {...getInputProps()} />
-        <div className={`dropzone ${isDragActive ? "active" : ""}`}>
-          {isDragActive ? (
-            <p>Drop the files here ...</p>
-          ) : (
-            <p>
-              Drag 'n' drop CSV or Excel files here, or click to select files
-            </p>
+    <>
+      <ClipLoader
+        loading={submitting}
+        cssOverride={override}
+        size={50}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+      <div className="flex-col algn-cent upload-container">
+        <div className="flex-col algn-cent py-2" {...getRootProps()}>
+          <ToastContainer />
+          <input {...getInputProps()} />
+          <div>
+            {isDragActive ? (
+              <p>Drop the files here ...</p>
+            ) : (
+              <p>Drag and drop files here, or click to select files</p>
+            )}
+          </div>
+          {uploadedFile == null && (
+            <img
+              className="upload-img"
+              src={UploadFileImage}
+              alt={"Upload file"}
+            />
+          )}
+          {uploadedFile !== null && (
+            <div className="flex-row algn-cent">
+              <div className="uploaded-file algn-cent">
+                <p>Uploaded file:</p>
+
+                <p className="file-name">{uploadedFile.name}</p>
+              </div>
+            </div>
           )}
         </div>
         {uploadedFile !== null && (
-          <div>
-            <div className="uploaded-file">
-              <p>Uploaded file:</p>
-              <p>{uploadedFile.name}</p>
-            </div>
-          </div>
+          <button className="btn-primary mb-1" onClick={handleSubmit}>
+            Submit
+          </button>
         )}
       </div>
-      {uploadedFile !== null && <button onClick={handleSubmit}>Submit</button>}
-    </div>
+    </>
   );
 }

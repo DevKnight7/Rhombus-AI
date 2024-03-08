@@ -1,7 +1,11 @@
 .upload-container {
   width: 50%;
-  border-style: dotted solid;
+  border-style: dotted;
   border-color: gray;
+}
+
+.upload-container:hover{
+  cursor: pointer;
 }
 
 .uploaded-file {
@@ -9,3 +13,30 @@
   flex-direction: row;
   gap: 2rem;
 }
+
+
+.btn-primary{
+  background-color:   #75b5ff;
+  border: none;
+  color: white;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+}
+
+.btn-primary:hover{
+  cursor: pointer;
+}
+
+.upload-img{
+  width: 5rem;
+  height: 5rem;
+}
+
+
+
+.file-name{
+  background-color: lightgray;
+  padding: 0.5rem 0.5rem;
+  border-radius: 1rem;
+}
+
