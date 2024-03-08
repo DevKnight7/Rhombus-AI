@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import pandas as pd
@@ -75,6 +74,7 @@ def get_data_types(data_frame):
           'data_type': 'integer',
           'content': content
         }
+      
       continue
 
     if data_frame[col].dtype == 'float64' or data_frame[col].dtype == 'float32' or data_frame[col].dtype == 'float16':
@@ -141,11 +141,7 @@ def read_data(uploaded_file):
     
 @csrf_exempt
 def process_data(request):
-    if request.method == 'GET':
-        # Handle GET requests
-        return JsonResponse({"message": "This is a GET request."})
-    elif request.method == 'POST':
-        # Handle POST requests
+    if request.method == 'POST':
         uploaded_file = request.FILES.get('file')
 
         if uploaded_file:
